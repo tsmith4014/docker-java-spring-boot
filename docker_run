@@ -1,0 +1,7 @@
+docker network create goldenwaste-network
+
+docker run -d --network goldenwaste-network --name goldenwastesqldb -e MYSQL_ROOT_PASSWORD=DevOps -e MYSQL_DATABASE=goldenwaste mysql
+
+docker build -t golden .
+
+docker run -itd --name golden-app -p 9876:8080 --network goldenwaste-network -e GOLDEN_DB_URL=goldenwastesqldb -e GOLDEN_DB_PASSWORD=DevOps -e GOLDEN_DB_USERNAME=root -e GOLDEN_DB_NAME=goldenwaste -e GOLDEN_DB_PORT=3306 golden
