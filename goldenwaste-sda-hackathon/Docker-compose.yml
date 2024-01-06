@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   app:
     container_name: golden-app
@@ -7,18 +7,62 @@ services:
       - "8080:8080"
     environment:
       - GOLDEN_DB_URL=db
-      - GOLDEN_DB_PASSWORD=DevOps
-      - GOLDEN_DB_USERNAME=root
-      - GOLDEN_DB_NAME=goldenwaste
       - GOLDEN_DB_PORT=3306
+      - GOLDEN_DB_NAME=goldenwaste
+      - GOLDEN_DB_USERNAME=root
+      - GOLDEN_DB_PASSWORD=edwin2023
     depends_on:
-      - db
-
+      db:
+        condition: service_healthy
+    networks:
+      - goldenwaste-network
   db:
     image: "mysql"
-    container_name: goldenwastesqldb
+    container_name: goldenwastedb
     ports:
       - "3306:3306"
     environment:
       - MYSQL_DATABASE=goldenwaste
-      - MYSQL_ROOT_PASSWORD=DevOps
+      - MYSQL_ROOT_PASSWORD=edwin2023
+    healthcheck:
+      test: ["CMD","mysqladmin","ping"]
+      timeout: 20s
+      retries: 10
+    volumes:
+      - goldenwaste-mysql:/var/lib/mysql
+      - goldenwaste-mysql-config:/etc/mysql
+    networks:
+      - goldenwaste-network
+volumes:
+  goldenwaste-mysql:
+  goldenwaste-mysql-config:
+networks:
+  goldenwaste-network:
+    name: goldenwaste-network
+    driver: bridge
+
+
+# version: "3"
+# services:
+#   app:
+#     container_name: golden-app
+#     build: .
+#     ports:
+#       - "8080:8080"
+#     environment:
+#       - GOLDEN_DB_URL=db
+#       - GOLDEN_DB_PASSWORD=DevOps
+#       - GOLDEN_DB_USERNAME=root
+#       - GOLDEN_DB_NAME=goldenwaste
+#       - GOLDEN_DB_PORT=3306
+#     depends_on:
+#       - db
+
+#   db:
+#     image: "mysql"
+#     container_name: goldenwastesqldb
+#     ports:
+#       - "3306:3306"
+#     environment:
+#       - MYSQL_DATABASE=goldenwaste
+#       - MYSQL_ROOT_PASSWORD=DevOps
